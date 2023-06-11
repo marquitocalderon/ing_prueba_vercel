@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
-const sequelize = new Sequelize('proyecto', 'root', '', {
-  host: 'localhost',
+const sequelize = new Sequelize('bnmxuag9lgcoiibiecvm', 'uqsdhfl6trbt0nne', 'LhwQ5Tb4vrD6TJa8gk8k', {
+  host: 'bnmxuag9lgcoiibiecvm-mysql.services.clever-cloud.com',
   dialect: 'mysql',
 });
 
