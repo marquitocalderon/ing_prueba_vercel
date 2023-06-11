@@ -158,6 +158,21 @@ app.get('/principal/prueba2', ensureAuthenticated, (req, res) => {
   res.render('prueba2');
 });
 
+app.get('/salir', (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      console.error('Error al cerrar sesión:', err);
+    }
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error al destruir la sesión:', err);
+      }
+      res.redirect('/login');
+    });
+  });
+});
+
+
 // Resto de tus rutas...
 
 // Sincronizar el modelo con la base de datos y luego iniciar el servidor
