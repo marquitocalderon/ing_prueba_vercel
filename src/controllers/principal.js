@@ -1,9 +1,6 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require("../../database/basededatos");
 
-const sequelize = new Sequelize('buh5pev0wmpkxzzzunkj', 'uxsvg0q0r58hniyu', 'BOHAFwBGKvil2t1JoGSO', {
-  host: 'buh5pev0wmpkxzzzunkj-mysql.services.clever-cloud.com',
-  dialect: 'mysql',
-});
+
 
 const vistaPrincipal = (req, res) => {
   // Esta ruta solo está disponible para usuarios autenticados

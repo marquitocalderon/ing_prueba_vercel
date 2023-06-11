@@ -32,13 +32,11 @@ app.use(passport.session());
 
 // Configuración de express-flash
 const flash = require('express-flash');
+const sequelize = require('./database/basededatos');
 app.use(flash());
 
 // Conexión a la base de datos
-const sequelize = new Sequelize('buh5pev0wmpkxzzzunkj', 'uxsvg0q0r58hniyu', 'BOHAFwBGKvil2t1JoGSO', {
-  host: 'buh5pev0wmpkxzzzunkj-mysql.services.clever-cloud.com',
-  dialect: 'mysql',
-});
+
 
 // Definición del modelo de usuario
 const Usuario = sequelize.define('Usuario', {
@@ -164,19 +162,21 @@ app.get('/principal/prueba2', ensureAuthenticated, (req, res) => {
 res.render('prueba2');
 });
 
-app.get('/salir', (req, res) => {
-req.logout((err) => {
-  if (err) {
-    console.error('Error al cerrar sesión:', err);
-  }
-  req.session.destroy((err) => {
+
+app.get('/salir', ensureAuthenticated, (req, res) => {
+  req.logout((err) => {
     if (err) {
-      console.error('Error al destruir la sesión:', err);
+      console.error('Error al cerrar sesión:', err);
     }
-    res.redirect('/login');
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error al destruir la sesión:', err);
+      }
+      res.redirect(303, '/login');
+    });
   });
 });
-});
+
 
 // Resto de tus rutas...
 
