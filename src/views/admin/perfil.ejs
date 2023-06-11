@@ -1,13 +1,257 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    perfiles
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  </head>
+  <body>
 
-    <a href="/admin">Retroceder</a>
-</body>
+    <style>
+        .navbar-nav.custom-margin {
+          margin-right: 85px; /* Puedes ajustar el valor del margen según tus preferencias */
+        }
+      </style>
+      
+      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a  class="navbar-brand" href="#">San Mathias</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Seguridad
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="/admin/usuarios">Usuarios</a></li>
+                  <li><a class="dropdown-item" href="/admin/perfiles">Perfiles</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="/admin/cambiarcontra">Cambiar Contraseña</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Productos
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Dropdown
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+              </li>
+            </ul>
+            <ul class="navbar-nav ms-auto custom-margin mb-2 mb-lg-0"> <!-- Alinea a la izquierda y agrega margen personalizado -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Perfil
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Datos</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="/salir">Salir</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <div>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">Registrar Perfil</button>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Perfil</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% perfiles.forEach(function(perfil) { %>
+                        <tr>
+                          <td><%= perfil.idperfil %></td>
+                          <td id="sinrecargar-cargo-<%= perfil.idperfil%>"><%= perfil.cargo %></td>
+                          <td id="sinrecargar-estado-<%= perfil.idperfil %>"><%= perfil.estado %></td>
+                          <td>
+                            <button class="btn btn-success boton-actualizar" data-id="<%= perfil.idperfil %>"
+                                data-bs-toggle="modal" data-bs-target="#modalActualizar" title="Editar"><i class="bi bi-app-indicator"></i></button>
+                        </td>
+                        </tr>
+                      <% }); %>
+                    </tbody>
+                  </table>
+                  
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Registrar Perfil</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="myForm">
+                <div class="form-group">
+                  <label for="cargoInput">Cargo:</label>
+                  <input type="text" class="form-control" id="cargoInput" placeholder="Ingrese su cargo">
+                </div>
+                
+              </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" id="guardarDatos">Registrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+        
+  <div class="modal2">
+    <!-- Modal Actualizar -->
+    <div class="modal fade" id="modalActualizar" tabindex="-1" aria-labelledby="modalActualizarLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalActualizarLabel">Actualizar Datos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formularioActualizar">
+                        <div class="mb-3">
+                            <label for="cargoInput">Cargo:</label>
+                            <input type="text" class="form-control" id="cargoInput2" placeholder="Ingrese su cargo">
+                        </div>
+                        <div class="mb-3">
+                            <label for="estadoSelect">Estado:</label>
+                            <select class="form-select" name="estado" id="estadoSelect">
+                                <option value="Activo">Activo</option>
+                                <option value="Inactivo">Inactivo</option>
+                            </select>
+                        </div>
+                        <input type="hidden" id="idperfil" name="idperfil">
+                        <button type="submit" id="btnGuardarCambios" class="btn btn-primary">Guardar cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+<script>
+    // Obtener el botón "Actualizar"
+    const botonesActualizar = document.querySelectorAll('.boton-actualizar');
+  
+    // Al hacer clic en cualquier botón "Actualizar"
+    botonesActualizar.forEach(boton => {
+      boton.addEventListener('click', () => {
+        const id = boton.getAttribute('data-id');
+  
+        // Realizar la solicitud GET mediante Axios
+        axios.get(`/admin/perfiles/${id}`)
+          .then(response => {
+            console.log(response.data); // Agrega esta línea para verificar los datos recibidos
+  
+            // Rellenar el formulario con los datos obtenidos
+            const datos = response.data[0]; // Obtener el primer elemento del array de resultados
+            document.getElementById('cargoInput2').value = datos.cargo;
+  
+            // Al hacer clic en "Guardar cambios"
+            document.getElementById('btnGuardarCambios').addEventListener('click', (event) => {
+              event.preventDefault(); // Evitar que el formulario se envíe automáticamente
+  
+              // Obtener el nuevo valor del campo "cargo"
+              const nuevoCargo = document.getElementById('cargoInput2').value;
+  
+              // Realizar la solicitud PUT mediante Axios
+              axios.put(`/admin/perfiles/${id}`, { cargo: nuevoCargo })
+                .then(response => {
+                  console.log(response.data); // Agrega esta línea para verificar la respuesta del servidor
+  
+                  // Actualizar el campo "cargo" en el formulario
+                  document.getElementById('cargoInput2').value = nuevoCargo;
+                })
+                .catch(error => {
+                  console.error(error);
+                });
+            });
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      });
+    });
+  </script>
+  
+
+<script>
+     // Evento de click en el botón "Guardar Datos"
+     document.getElementById('guardarDatos').addEventListener('click', () => {
+      const cargo = document.getElementById('cargoInput').value;
+  
+      axios.post('/admin/perfiles', { cargo})
+        .then(response => {
+          console.log(response.data);
+          // Aquí puedes realizar las acciones necesarias después de guardar los datos
+          swal.fire({
+            title: "Datos guardados",
+            text: "Los datos se han guardado exitosamente",
+            icon: "success",
+          });
+  
+          // Limpiar el formulario
+          document.getElementById('myForm').reset();
+
+             
+        })
+        .catch(error => {
+          console.error(error);
+          swal.fire({
+            title: "Error",
+            text: "Los datos no se han guardado exitosamente",
+            icon: "error",
+          });
+        });
+    });
+  
+</script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+  </body>
 </html>

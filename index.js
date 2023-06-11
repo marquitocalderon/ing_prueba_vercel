@@ -3,29 +3,11 @@ const pool = require('./database/db')
 const bodyParser = require('body-parser');
 const app = express(); 
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-/*----------------------------------------------------------------------------------------------------------------*/
 
-// 2 setemos urlencoded para capturar los datos del formulario
+app.use(bodyParser.json());app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-app.use(express.urlencoded({extended:false})) /* para este caso leer abajo !!!
-
-si un formulario HTML se envía con un método POST, los datos del formulario se enviarán en el cuerpo de la solicitud con esta codificación express.urlencoded().
-
-Si extended es false, se utilizara querystring y casi todos dicen que "se recomienda utilizar extended: false a menos que sea absolutamente necesario utilizar qs" pero como tamos aprendiendo extended:false caballero nomas xd.
-
---------------------------------------------------------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------------------------------------------------*/
-
-app.use(express.json()) /* 
-Por ejemplo con este caso, si un usuario envía datos en formato JSON a través de una solicitud HTTP POST, este middleware se encargará de analizar y decodificar esos datos.
-
-un middleware es una función que se ejecuta en el medio del procesamiento de una solicitud HTTP y una respuesta HTTP. Puede realizar tareas como analizar y modificar la solicitud o la respuesta, comprobar la autenticación del usuario, registrar información de seguimiento y mucho más.
-*/
-
-/*----------------------------------------------------------------------------------------------------------------*/
 
 
 /*----------------------------------------------------------------------------------------------------------------*/

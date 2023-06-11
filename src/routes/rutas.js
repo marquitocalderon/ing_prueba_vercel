@@ -2,7 +2,7 @@ const express = require("express");
 const session = require("express-session");
 const pool = require("../../database/db");
 const bcryptjs = require("bcryptjs");
-const { vistaPerfil } = require("../controllers/admin/registrarperfiles");
+const { vistaPerfil, postPerfil, vistaPerfilID, putVista } = require("../controllers/admin/registrarperfiles");
 
 const router = express.Router();
 
@@ -23,12 +23,12 @@ function protectRoute(req, res, next) {
     return res.redirect("/login");
   }
 
-  const idperfil = user.idperfil;
+  const idperfil = user.cargo; // Corregir el acceso al campo 'cargo' en lugar de 'idperfil'
 
   if (
-    (idperfil === 1 && req.path.startsWith("/admin")) ||
-    (idperfil === 2 && req.path.startsWith("/caja")) ||
-    (idperfil === 3 && req.path.startsWith("/almacen"))
+    (idperfil === "Administrador" && req.path.startsWith("/admin")) ||
+    (idperfil === "Caja" && req.path.startsWith("/caja")) ||
+    (idperfil === "Almacen" && req.path.startsWith("/almacen"))
   ) {
     req.userId = user.id; // Agregar el ID del usuario al objeto de solicitud (req)
     next(); // Permitir el acceso
@@ -37,6 +37,7 @@ function protectRoute(req, res, next) {
     res.redirect("/login");
   }
 }
+
 
 router.get("/", (req, res) => {
   res.render("login");
@@ -57,7 +58,7 @@ router.post("/login", (req, res) => {
   }
 
   pool.query(
-    "SELECT * FROM usuarios WHERE usuario = ?",
+    "SELECT * FROM usuarios INNER JOIN perfil ON usuarios.idperfil = perfil.idperfil WHERE usuario = ?",
     [usuario],
     (error, results) => {
       if (error) {
@@ -70,21 +71,23 @@ router.post("/login", (req, res) => {
         return res.redirect("/login");
       }
 
-      if (user.estado === "Inactivo") {
+      if (user.estado_usuario === "Inactivo") {
         return res.redirect("/login");
       }
 
-      req.session.user = user; // Almacena todos los datos del usuario en la sesión
-
-      const idPerfil = user.idperfil;
-      switch (idPerfil) {
-        case 1:
+      req.session.user = {
+        id: user.idusuario,
+        cargo: user.cargo
+      }; // Almacena el ID y cargo del usuario en la sesión
+    console.log(user.cargo)
+      switch (user.cargo) {
+        case "Administrador":
           res.redirect("/admin");
           break;
-        case 2:
+        case "Caja":
           res.redirect("/caja");
           break;
-        case 3:
+        case "Almacen":
           res.redirect("/almacen");
           break;
         default:
@@ -100,7 +103,45 @@ router.get("/admin", protectRoute, (req, res) => {
   res.render("admin");
 });
 
+
+
+
 router.get("/admin/perfiles", protectRoute, vistaPerfil);
+router.get("/admin/perfiles/:id", vistaPerfilID);
+
+router.put('/admin/perfiles/:id', function (req, res) {
+  const idPerfil = req.params.id; // Obtener el ID del perfil del cuerpo de la solicitud
+  const cargo = req.body.cargo; // Obtener el nuevo cargo del cuerpo de la solicitud
+
+  // Realizar la consulta UPDATE específica utilizando el ID del perfil y el nuevo cargo
+  pool.query('UPDATE perfil SET cargo = ? WHERE idperfil = ?', [cargo, idPerfil], function (error, results, fields) {
+    if (error) {
+      console.error(error);
+      res.status(500).json({ error: "Error al actualizar el perfil" });
+    } else {
+      // Actualización exitosa, enviar una respuesta de éxito
+      console.log('Datos actualizados exitosamente');
+      res.send('Datos actualizados exitosamente');
+    }
+  });
+});
+
+
+
+
+router.post("/admin/perfiles", postPerfil);
+
+
+
+
+
+
+
+
+
+
+
+
 
 router.get("/caja", protectRoute, (req, res) => {
   res.render("caja");
