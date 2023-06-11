@@ -35,8 +35,8 @@ const flash = require('express-flash');
 app.use(flash());
 
 // Conexión a la base de datos
-const sequelize = new Sequelize('bnmxuag9lgcoiibiecvm', 'uqsdhfl6trbt0nne', 'LhwQ5Tb4vrD6TJa8gk8k', {
-  host: 'bnmxuag9lgcoiibiecvm-mysql.services.clever-cloud.com',
+const sequelize = new Sequelize('buh5pev0wmpkxzzzunkj', 'uxsvg0q0r58hniyu', 'BOHAFwBGKvil2t1JoGSO', {
+  host: 'buh5pev0wmpkxzzzunkj-mysql.services.clever-cloud.com',
   dialect: 'mysql',
 });
 
