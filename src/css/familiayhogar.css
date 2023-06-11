@@ -1,0 +1,16 @@
+
+#hombresInput {
+  width: 100px;
+}
+#mujeresInput {
+  width: 100px;
+}
+
+@media (max-width: 768px) {
+  #hombresInput {
+    width: 20%;
+  }
+  #mujeresInput {
+    width: 20%;
+  }
+}

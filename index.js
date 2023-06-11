@@ -1,188 +1,99 @@
-const express = require('express');
-const path = require('path');
-const session = require('express-session');
+const express = require('express')
+const pool = require('./database/db')
 const bodyParser = require('body-parser');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const bcryptjs = require('bcryptjs');
-const mysql = require('mysql2');
-const { Sequelize, DataTypes } = require('sequelize');
-const { vistaPrincipal, postVistaprincipal } = require('./src/controllers/principal');
+const app = express(); 
 
-const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+/*----------------------------------------------------------------------------------------------------------------*/
 
-// Configuración de la aplicación Express
-app.set('port', process.env.PORT || 3000);
-app.set('views', path.join(__dirname, 'src/views'));
+// 2 setemos urlencoded para capturar los datos del formulario
+
+app.use(express.urlencoded({extended:false})) /* para este caso leer abajo !!!
+
+si un formulario HTML se envía con un método POST, los datos del formulario se enviarán en el cuerpo de la solicitud con esta codificación express.urlencoded().
+
+Si extended es false, se utilizara querystring y casi todos dicen que "se recomienda utilizar extended: false a menos que sea absolutamente necesario utilizar qs" pero como tamos aprendiendo extended:false caballero nomas xd.
+
+--------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------*/
+
+app.use(express.json()) /* 
+Por ejemplo con este caso, si un usuario envía datos en formato JSON a través de una solicitud HTTP POST, este middleware se encargará de analizar y decodificar esos datos.
+
+un middleware es una función que se ejecuta en el medio del procesamiento de una solicitud HTTP y una respuesta HTTP. Puede realizar tareas como analizar y modificar la solicitud o la respuesta, comprobar la autenticación del usuario, registrar información de seguimiento y mucho más.
+*/
+
+/*----------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------*/
+
+app.use('/src', express.static('src'))
+app.use('/src', express.static(__dirname + '/src'))
+
+/*
+Estas líneas de código indican a la aplicación Express que utilice los archivos estáticos (como archivos CSS, imágenes, scripts) que se encuentran en el directorio "src".
+
+
+POR EJEMPLO EN TU HTMK O DONDE VAS USAR PONES ESTO href="/src/css/pregunta1.css"
+quedaria asi ------------->   <link rel="stylesheet" href="/src/css/pregunta1.css">
+ */
+
+/*----------------------------------------------------------------------------------------------------------------*/
+
+
+
+/*----------------------------------------------------------------------------------------------------------------*/
+const path = require('path');
 app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, 'src/public')));
+app.set('views', [
+  path.join(__dirname, './src/views'),
+  path.join(__dirname, './src/views/admin'),
+  path.join(__dirname, './src/views/caja')
+]);
+console.log(app.get('view engine'))
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+/* 
+app.set('view engine', 'ejs');
+ESTO SIRVE PARA EL MOTOR DE PLANTILAS PARA EL FRONTED CON QUE VAN A TRABAJAR SOLO PARA PRUEBA PUSE HBS PARA USAR POR EJEMPLOS index.ejs , pero en caso de usar hbs  solo cambiar a "ejs" a "hbs" , si pones html no te dejara
 
-// Configuración de Passport y sesión
-app.use(session({
-  secret: 'markus',
-  resave: false,
-  saveUninitialized: false,
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Configuración de express-flash
-const flash = require('express-flash');
-const sequelize = require('./database/basededatos');
-app.use(flash());
-
-// Conexión a la base de datos
+app.set('views', path.join(__dirname, './src/views'));
+esto sirve para buscar la informacion del html
 
 
-// Definición del modelo de usuario
-const Usuario = sequelize.define('Usuario', {
-  idusuario: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  dni_usuario: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  nombre: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  usuario: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  imagen: {
-    type: DataTypes.STRING,
-  },
-  estado_usuario: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  idperfil: {
-    type: DataTypes.INTEGER,
-  },
-}, {
-  tableName: 'usuarios',
-  timestamps: false, // Si la tabla no tiene timestamps createdAt y updatedAt
-});
-
-// Configuración de Passport y sesión
-passport.use(new LocalStrategy(
-  {
-    usernameField: 'usuario',
-    passwordField: 'password',
-    passReqToCallback: true, // Pasar la solicitud a la devolución de llamada para acceder a req.flash()
-  },
-  async (req, usuario, password, done) => {
-    try {
-      const user = await Usuario.findOne({
-        where: {
-          usuario: usuario,
-        },
-      });
-
-      if (!user || !(await bcryptjs.compare(password, user.password))) {
-        req.flash('error', 'Usuario o contraseña incorrectos'); // Guardar el mensaje de error en req.flash()
-        return done(null, false);
-      }
-
-      if (user.estado_usuario === 'Inactivo') {
-        req.flash('error', 'Tu cuenta está inactiva'); // Guardar el mensaje de error en req.flash()
-        return done(null, false);
-      }
-
-      return done(null, user);
-    } catch (error) {
-      return done(error);
-    }
-  }
-));
-
-// Configuración de la serialización y deserialización del usuario
-passport.serializeUser((user, done) => {
-  done(null, user.idusuario);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await Usuario.findByPk(id);
-    done(null, user);
-  } catch (error) {
-    done(error);
-  }
-});
 
 
-// Middleware para verificar la autenticación
-const ensureAuthenticated = (req, res, next) => {
-if (req.isAuthenticated()) {
-  return next();
-}
-
-res.redirect('/login');
-};
-
-// Rutas
-app.get('/', (req, res) => {
-// Renderiza el formulario de inicio de sesión
-res.render('login', { messages: req.flash('error') }); // Pasar mensajes de error a la vista
-});
-
-app.get('/login', (req, res) => {
-// Renderiza el formulario de inicio de sesión
-res.render('login', { messages: req.flash('error') }); // Pasar mensajes de error a la vista
-});
-
-app.post('/login', passport.authenticate('local', {
-successRedirect: '/principal',
-failureRedirect: '/login',
-failureFlash: true, // Habilitar mensajes flash en caso de fallo de autenticación
-}));
-
-app.get('/principal', ensureAuthenticated ,vistaPrincipal);
-app.post('/principal', ensureAuthenticated ,postVistaprincipal);
-
-app.get('/principal/prueba', ensureAuthenticated, (req, res) => {
-// Esta ruta solo está disponible para usuarios autenticados
-res.render('prueba');
-});
-
-app.get('/principal/prueba2', ensureAuthenticated, (req, res) => {
-// Esta ruta solo está disponible para usuarios autenticados
-res.render('prueba2');
-});
+*/
 
 
-app.get('/salir', ensureAuthenticated, (req, res) => {
-  req.logout((err) => {
+
+/*----------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------*/
+// ENLAZAR LAS RUTAS DESDE LA CARPTA ROUTES PERO PRIMERO TIENES QUE IMPORTAR EL ARCHIVO
+ const rutas = require('./src/routes/rutas');
+ app.use(rutas)
+
+
+
+
+/*----------------------------------------------------------------------------------------------------------------*/
+
+
+//PRUEBA DE LA CONEXION A LA BASE DE DATOS MYSQL
+pool.getConnection((err, connection) => {
     if (err) {
-      console.error('Error al cerrar sesión:', err);
+      console.error('Error al conectar a la base de datos:', err);
+      return;
     }
-    req.session.destroy((err) => {
-      if (err) {
-        console.error('Error al destruir la sesión:', err);
-      }
-      res.redirect(303, '/login');
-    });
-  });
-});
+    else{
+        console.log('Conexión a la base de datos de mysql con éxito!');
+    }
+})
 
-
-// Resto de tus rutas...
-
-// Sincronizar el modelo con la base de datos y luego iniciar el servidor
-sequelize.sync().then(() => {
-app.listen(app.get('port'), () => {
-  console.log(`Servidor corriendo en el puerto ${app.get('port')}`);
-});
+// El puerto de local host para ver en el navegador
+app.listen(3000, () => {
+    console.log("El servidor esta corriendo el puerto 3000 ---> " + "http://localhost:3000/");
 });
