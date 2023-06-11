@@ -1,11 +1,12 @@
 const express = require('express');
 const path = require('path');
-const { Sequelize, DataTypes } = require('sequelize');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcryptjs = require('bcryptjs');
+const mysql = require('mysql2');
+const { Sequelize, DataTypes } = require('sequelize');
 
 const app = express();
 
@@ -80,9 +81,10 @@ passport.use(new LocalStrategy(
   },
   async (usuario, password, done) => {
     try {
-      const [user] = await sequelize.query('SELECT * FROM usuarios WHERE usuario = :usuario', {
-        replacements: { usuario },
-        type: sequelize.QueryTypes.SELECT
+      const user = await Usuario.findOne({
+        where: {
+          usuario: usuario,
+        },
       });
 
       if (!user || !(await bcryptjs.compare(password, user.password))) {
@@ -100,6 +102,8 @@ passport.use(new LocalStrategy(
   }
 ));
 
+
+
 // Configuración de la serialización y deserialización del usuario
 passport.serializeUser((user, done) => {
   done(null, user.idusuario);
@@ -107,16 +111,13 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const [user] = await sequelize.query('SELECT * FROM usuarios WHERE idusuario = :id', {
-      replacements: { id },
-      type: sequelize.QueryTypes.SELECT
-    });
+    const user = await Usuario.findByPk(id);
     done(null, user);
   } catch (error) {
     done(error);
-  }})
+  }
+});
 
-  // Middleware para verificar la autenticación
 // Middleware para verificar la autenticación
 const ensureAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -151,6 +152,7 @@ app.get('/principal/prueba', ensureAuthenticated, (req, res) => {
   // Esta ruta solo está disponible para usuarios autenticados
   res.render('prueba');
 });
+
 app.get('/principal/prueba2', ensureAuthenticated, (req, res) => {
   // Esta ruta solo está disponible para usuarios autenticados
   res.render('prueba2');
@@ -158,18 +160,9 @@ app.get('/principal/prueba2', ensureAuthenticated, (req, res) => {
 
 // Resto de tus rutas...
 
-// Sincronización del modelo y conexión a la base de datos
-(async () => {
-  try {
-    await sequelize.sync();
-    console.log('Modelo Usuario sincronizado correctamente');
-    
-    // Aquí puedes ejecutar el código adicional que necesites
-
-    app.listen(app.get('port'), () => {
-      console.log(`Servidor corriendo en el puerto ${app.get('port')}`);
-    });
-  } catch (error) {
-    console.error('Error al sincronizar el modelo:', error.message);
-  }
-})();
+// Sincronizar el modelo con la base de datos y luego iniciar el servidor
+sequelize.sync().then(() => {
+  app.listen(app.get('port'), () => {
+    console.log(`Servidor corriendo en el puerto ${app.get('port')}`);
+  });
+});
