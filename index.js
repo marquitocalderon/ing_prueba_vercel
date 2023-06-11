@@ -7,6 +7,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const bcryptjs = require('bcryptjs');
 const mysql = require('mysql2');
 const { Sequelize, DataTypes } = require('sequelize');
+const { vistaPrincipal, postVistaprincipal } = require('./src/controllers/principal');
 
 const app = express();
 
@@ -28,6 +29,10 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Configuración de express-flash
+const flash = require('express-flash');
+app.use(flash());
 
 // Conexión a la base de datos
 const sequelize = new Sequelize('bnmxuag9lgcoiibiecvm', 'uqsdhfl6trbt0nne', 'LhwQ5Tb4vrD6TJa8gk8k', {
@@ -73,13 +78,14 @@ const Usuario = sequelize.define('Usuario', {
   timestamps: false, // Si la tabla no tiene timestamps createdAt y updatedAt
 });
 
-// Configuración de la estrategia de autenticación local
+// Configuración de Passport y sesión
 passport.use(new LocalStrategy(
   {
     usernameField: 'usuario',
     passwordField: 'password',
+    passReqToCallback: true, // Pasar la solicitud a la devolución de llamada para acceder a req.flash()
   },
-  async (usuario, password, done) => {
+  async (req, usuario, password, done) => {
     try {
       const user = await Usuario.findOne({
         where: {
@@ -88,11 +94,13 @@ passport.use(new LocalStrategy(
       });
 
       if (!user || !(await bcryptjs.compare(password, user.password))) {
-        return done(null, false, { message: 'Usuario o contraseña incorrectos' });
+        req.flash('error', 'Usuario o contraseña incorrectos'); // Guardar el mensaje de error en req.flash()
+        return done(null, false);
       }
 
       if (user.estado_usuario === 'Inactivo') {
-        return done(null, false, { message: 'Tu cuenta está inactiva' });
+        req.flash('error', 'Tu cuenta está inactiva'); // Guardar el mensaje de error en req.flash()
+        return done(null, false);
       }
 
       return done(null, user);
@@ -101,8 +109,6 @@ passport.use(new LocalStrategy(
     }
   }
 ));
-
-
 
 // Configuración de la serialización y deserialización del usuario
 passport.serializeUser((user, done) => {
@@ -118,66 +124,65 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
+
 // Middleware para verificar la autenticación
 const ensureAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return next();
-  }
+if (req.isAuthenticated()) {
+  return next();
+}
 
-  res.redirect('/login');
+res.redirect('/login');
 };
 
 // Rutas
 app.get('/', (req, res) => {
-  // Renderiza el formulario de inicio de sesión
-  res.render('login');
+// Renderiza el formulario de inicio de sesión
+res.render('login', { messages: req.flash('error') }); // Pasar mensajes de error a la vista
 });
 
 app.get('/login', (req, res) => {
-  // Renderiza el formulario de inicio de sesión
-  res.render('login');
+// Renderiza el formulario de inicio de sesión
+res.render('login', { messages: req.flash('error') }); // Pasar mensajes de error a la vista
 });
 
 app.post('/login', passport.authenticate('local', {
-  successRedirect: '/principal',
-  failureRedirect: '/login',
+successRedirect: '/principal',
+failureRedirect: '/login',
+failureFlash: true, // Habilitar mensajes flash en caso de fallo de autenticación
 }));
 
-app.get('/principal', ensureAuthenticated, (req, res) => {
-  // Esta ruta solo está disponible para usuarios autenticados
-  res.render('principal');
-});
+app.get('/principal', ensureAuthenticated ,vistaPrincipal);
+app.post('/principal', ensureAuthenticated ,postVistaprincipal);
 
 app.get('/principal/prueba', ensureAuthenticated, (req, res) => {
-  // Esta ruta solo está disponible para usuarios autenticados
-  res.render('prueba');
+// Esta ruta solo está disponible para usuarios autenticados
+res.render('prueba');
 });
 
 app.get('/principal/prueba2', ensureAuthenticated, (req, res) => {
-  // Esta ruta solo está disponible para usuarios autenticados
-  res.render('prueba2');
+// Esta ruta solo está disponible para usuarios autenticados
+res.render('prueba2');
 });
 
 app.get('/salir', (req, res) => {
-  req.logout((err) => {
+req.logout((err) => {
+  if (err) {
+    console.error('Error al cerrar sesión:', err);
+  }
+  req.session.destroy((err) => {
     if (err) {
-      console.error('Error al cerrar sesión:', err);
+      console.error('Error al destruir la sesión:', err);
     }
-    req.session.destroy((err) => {
-      if (err) {
-        console.error('Error al destruir la sesión:', err);
-      }
-      res.redirect('/login');
-    });
+    res.redirect('/login');
   });
 });
-
+});
 
 // Resto de tus rutas...
 
 // Sincronizar el modelo con la base de datos y luego iniciar el servidor
 sequelize.sync().then(() => {
-  app.listen(app.get('port'), () => {
-    console.log(`Servidor corriendo en el puerto ${app.get('port')}`);
-  });
+app.listen(app.get('port'), () => {
+  console.log(`Servidor corriendo en el puerto ${app.get('port')}`);
+});
 });
