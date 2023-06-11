@@ -1,22 +1,24 @@
-const express = require('express')
-const { vistaPrincipal } = require('../controllers/login.controller')
+// const express = require('express')
+// const { vistaPrincipal, PostvistaPrincipal } = require('../controllers/login.controller')
 
 
-const router = express.Router()
+// const router = express.Router()
 
-router.get("/", (req, res) => {
-    res.render("login")
-})
-
-
-router.get("/login", (req, res) => {
-    res.render("login")
-})
+// router.get("/", (req, res) => {
+//     res.render("login")
+// })
 
 
-
-router.get("/principal", vistaPrincipal) 
+// router.get("/login", (req, res) => {
+//     res.render("login")
+// })
+// router.post("/login", PostvistaPrincipal) 
 
 
 
-module.exports= router
+
+// router.get("/principal", vistaPrincipal) 
+
+
+
+// module.exports= router
