@@ -2,6 +2,7 @@ const pool = require("../../../database/db");
 const bcryptjs = require('bcryptjs');
 const cloudinary = require('cloudinary').v2;
 
+
 const vistaUsuarios = (req, res) => {
     // Puedes acceder al ID del usuario desde req.userId
     pool.query(
@@ -25,18 +26,6 @@ const vistaUsuarios = (req, res) => {
   };
   
 
-const perfilJson = (req, res) => {
-    // Puedes acceder al ID del usuario desde req.userId
-    pool.query("SELECT * FROM usuarios", function (error, results, fields) {
-        if (error) {
-            console.error(error);
-            res.status(500).send("Error al obtener los datos");
-        } else {
-            // Enviar los datos obtenidos como respuesta en formato JSON
-            res.json(results);
-        }
-    });
-}
 
 // Configurar Cloudinary
 cloudinary.config({
@@ -44,12 +33,13 @@ cloudinary.config({
     api_key: '741854327165235',
     api_secret: 'iaeqAwrqS3Ae2VkwrO496j5Otcs'
   });
+
   
   const postUsuarios = async (req, res) => {
     try {
       const { dni_usuario, nombre, usuario, password, cargo } = req.body;
       const estado_usuario = "Activo";
-      const file = req.file; // Archivo de imagen
+      const fileBuffer = req.file.buffer; // Obtener el buffer del archivo
   
       // Verificar si el DNI ya existe en la base de datos
       const dniQuery = 'SELECT dni_usuario FROM usuarios WHERE dni_usuario = ?';
@@ -67,8 +57,8 @@ cloudinary.config({
         // Encriptar la contraseña
         const hashedPassword = await bcryptjs.hash(password, 8);
   
-        // Subir la imagen a Cloudinary de forma asíncrona
-        cloudinary.uploader.upload(file.path, { resource_type: "auto" }, async (error, cloudinaryUpload) => {
+        // Subir la imagen a Cloudinary utilizando upload_stream
+        cloudinary.uploader.upload_stream({ resource_type: "auto" }, async (error, cloudinaryUpload) => {
           if (error) {
             console.error('Error al subir la imagen a Cloudinary:', error);
             return res.status(500).json({ error: 'Error interno del servidor' });
@@ -91,7 +81,7 @@ cloudinary.config({
             // Enviar una respuesta exitosa
             res.json({ message: 'Datos guardados exitosamente' });
           });
-        });
+        }).end(fileBuffer); // Pasar el buffer del archivo a upload_stream
       });
     } catch (error) {
       console.error('Error al procesar la solicitud:', error);
@@ -99,27 +89,6 @@ cloudinary.config({
     }
   };
   
-
-
-
-
-
-
-
-const vistaPerfilID = (req, res) => {
-    const id = req.params.id;
-
-    // Realizar la consulta SELECT específica utilizando el ID
-    pool.query('SELECT * FROM perfil WHERE idperfil = ?', [id], function (error, results, fields) {
-        if (error) {
-            console.error(error);
-            res.status(500).json({ error: "Error al obtener los datos" });
-        } else {
-            // Enviar los datos obtenidos como respuesta en formato JSON
-            res.json(results);
-        }
-    });
-}
 
 
 

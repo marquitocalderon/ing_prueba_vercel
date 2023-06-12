@@ -4,6 +4,18 @@ const pool = require("../../database/db");
 const bcryptjs = require("bcryptjs");
 const { vistaPerfil, postPerfil, vistaPerfilID, putVista, perfilJson } = require("../controllers/admin/registrarperfiles");
 const { vistaUsuarios, postUsuarios } = require("../controllers/admin/registrarusuarios");
+const multer = require('multer');
+
+// Configurar multer
+const storage = multer.memoryStorage(); // Almacenar los archivos en memoria en lugar de guardarlos en el disco
+const imageFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('El archivo debe ser una imagen'));
+  }
+};
+const upload = multer({ storage, fileFilter: imageFilter });
 
 const router = express.Router();
 
@@ -142,7 +154,7 @@ router.put('/admin/perfiles/:id', function (req, res) {
 });
 
 router.get("/admin/usuarios", protectRoute, vistaUsuarios);
-router.post("/admin/usuarios", postUsuarios);
+router.post("/admin/usuarios", upload.single('imagen'), postUsuarios);
 
 
 router.post("/admin/perfiles", postPerfil);
