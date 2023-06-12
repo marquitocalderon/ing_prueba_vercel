@@ -2,8 +2,8 @@ const express = require("express");
 const session = require("express-session");
 const pool = require("../../database/db");
 const bcryptjs = require("bcryptjs");
-const { vistaPerfil, postPerfil, vistaPerfilID, putVista, perfilJson } = require("../controllers/admin/registrarperfiles");
-const { vistaUsuarios, postUsuarios } = require("../controllers/admin/registrarusuarios");
+const { vistaPerfil, postPerfil, vistaPerfilID, perfilJson, putVistaPerfil } = require("../controllers/admin/registrarperfiles");
+const { vistaUsuarios, postUsuarios, vistaUsuariosbyID, putUsuariobyUd, perfilJson2 } = require("../controllers/admin/registrarusuarios");
 const multer = require('multer');
 
 // Configurar multer
@@ -122,44 +122,16 @@ router.get("/admin", protectRoute, (req, res) => {
 router.get("/admin/perfiles", protectRoute, vistaPerfil);
 router.get("/admin/perfilesjson", protectRoute, perfilJson);
 router.get("/admin/perfiles/:id", vistaPerfilID);
-router.put('/admin/perfiles/:id', function (req, res) {
-  const idPerfil = req.params.id; // Obtener el ID del perfil del cuerpo de la solicitud
-  const nuevoCargo = req.body.cargo; // Obtener el nuevo cargo del cuerpo de la solicitud
-  const estado = req.body.estado;
-
-  // Verificar si existe otro perfil con el mismo cargo
-  pool.query('SELECT * FROM perfil WHERE cargo = ? AND idperfil <> ?', [nuevoCargo, idPerfil], function (error, results, fields) {
-    if (error) {
-      console.error(error);
-      res.status(500).json({ error: "Error al verificar el cargo del perfil" });
-    } else {
-      if (results.length > 0) {
-        // Ya existe otro perfil con el mismo cargo, enviar una respuesta de error
-        res.status(400).json({ error: "Ya existe otro perfil con el mismo cargo" });
-      } else {
-        // No existe otro perfil con el mismo cargo, realizar la consulta UPDATE
-        pool.query('UPDATE perfil SET cargo = ?, estado = ? WHERE idperfil = ?', [nuevoCargo, estado, idPerfil], function (error, results, fields) {
-          if (error) {
-            console.error(error);
-            res.status(500).json({ error: "Error al actualizar el perfil" });
-          } else {
-            // Actualización exitosa, enviar una respuesta de éxito
-            console.log('Datos actualizados exitosamente');
-            res.send('Datos actualizados exitosamente');
-          }
-        });
-      }
-    }
-  });
-});
+router.put('/admin/perfiles/:id',putVistaPerfil)
+router.post("/admin/perfiles", postPerfil);
 
 router.get("/admin/usuarios", protectRoute, vistaUsuarios);
 router.post("/admin/usuarios", upload.single('imagen'), postUsuarios);
 
+router.get("/admin/perfilesjson2", protectRoute, perfilJson2);
+router.put("/admin/usuarios/:id", putUsuariobyUd )
 
-router.post("/admin/perfiles", postPerfil);
-
-
+router.get("/admin/usuarios/:id", protectRoute, vistaUsuariosbyID);
 
 
 

@@ -124,23 +124,24 @@
                                     <td>
                                         <%= usuario.dni_usuario %>
                                     </td>
-                                    <td id="sinrecargar-nombre-<%= usuario.idusuario%>">
+                                    <td >
                                         <%= usuario.nombre %>
                                     </td>
-                                    <td id="sinrecargar-usuario-<%= usuario.idusuario %>">
+                                    <td>
                                         <%= usuario.usuario %>
                                     </td>
                                     <td>
                                         <%= usuario.cargo %>
                                     </td>
-                                    <td style="display: flex; justify-content: center; align-items: center;margin-top: -8px;">
+                                    <td
+                                        style="display: flex; justify-content: center; align-items: center;margin-top: -8px;">
                                         <img src="<%= usuario.imagenURL %>" alt="" style="width: 70px; height: 70px;">
-                                      </td>
+                                    </td>
                                     <td>
                                         <%= usuario.estado_usuario %>
                                     </td>
                                     <td>
-                                        <button class="btn btn-success boton-actualizar"
+                                        <button class="btn btn-success boton-actualizar2"
                                             data-id="<%= usuario.idusuario %>" data-bs-toggle="modal"
                                             data-bs-target="#modalActualizar" title="Editar"><i
                                                 class="bi bi-app-indicator"></i></button>
@@ -160,10 +161,11 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Registrar Perfil</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Registrar Usuario</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+
                     <form id="myForm" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="dniInput">DNI:</label>
@@ -187,18 +189,22 @@
                         </div>
                         <div class="mb-3">
                             <label for="nombreunidad">Perfil:</label>
-                           <select class="form-select" id="cargoInput" name="cargo" required>
-                              <% perfiles.forEach(function(perfil) { %>
-                              <option value="<%= perfil.idperfil %>"><%= perfil.cargo %></option>
-                             <% }); %>
-                             </select>
+                            <select class="form-select" id="cargoInput" name="cargo" required>
+                                <% perfiles.forEach(function(perfil) { %>
+                                    <option value="<%= perfil.idperfil %>">
+                                        <%= perfil.cargo %>
+                                    </option>
+                                    <% }); %>
+                            </select>
                         </div>
                     </form>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="guardarDatos">Registrar</button>
+                    <button class="btn btn-primary" id="registrarBtn" type="button">
+                        Registrar
+                    </button>
                 </div>
             </div>
         </div>
@@ -215,22 +221,40 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="formularioActualizar">
+                        <form id="formularioActualizar" enctype="multipart/form-data">
                             <div class="mb-3">
-                                <label for="cargoInput">Cargo:</label>
-                                <input type="text" class="form-control" id="cargoInput2" placeholder="Ingrese su cargo">
+                              <label for="dniInput">DNI:</label>
+                              <input type="number" class="form-control" name="dni_usuario" id="dniInput2" readonly>
                             </div>
                             <div class="mb-3">
-                                <label for="estadoSelect">Estado:</label>
-                                <select class="form-select" name="estado" id="estadoSelect">
-                                    <option value="Activo">Activo</option>
-                                    <option value="Inactivo">Inactivo</option>
-                                </select>
+                              <label for="nombreInput">Nombre:</label>
+                              <input type="text" class="form-control" name="nombre" id="nombreInput2">
                             </div>
-                            <input type="hidden" id="idperfil" name="idperfil">
-                            <button type="submit" id="btnGuardarCambios" class="btn btn-primary">Guardar
-                                cambios</button>
-                        </form>
+                            <div class="mb-3">
+                              <label for="usuarioInput">Usuario:</label>
+                              <input type="text" class="form-control" name="usuario" id="usuarioInput2">
+                            </div>
+                            <!-- <div class="mb-3">
+                                  <label for="imagenInput">Imagen:</label>
+                                  <input type="file" class="form-control" name="imagen" id="imagenInput2">
+                              </div> -->
+                            <div class="mb-3">
+                              <label for="nombreunidad">Perfil:</label>
+                              <select class="form-select" id="cargoInput2" name="cargo" required>
+                                <option value=""></option>
+                              </select>
+                            </div>
+                            <div class="mb-3">
+                              <label for="estadoSelect">Estado:</label>
+                              <select class="form-select" name="estado_usuario" id="estado">
+                                <option value="Activo">Activo</option>
+                                <option value="Inactivo">Inactivo</option>
+                              </select>
+                            </div>
+                            <input type="text" id="idusuario" name="idusuario">
+                            <button type="button" id="btnGuardarCambios2" class="btn btn-primary">Guardar cambios</button>
+                          </form>
+                          
                     </div>
                 </div>
             </div>
@@ -240,120 +264,168 @@
 
 
 
+
     <script>
         // Obtener el botón "Actualizar"
-        const botonesActualizar = document.querySelectorAll('.boton-actualizar');
-
+        const botonesActualizar = document.querySelectorAll('.boton-actualizar2');
+      
         // Al hacer clic en cualquier botón "Actualizar"
         botonesActualizar.forEach(boton => {
-            boton.addEventListener('click', () => {
-                const id = boton.getAttribute('data-id');
-
-                // Realizar la solicitud GET mediante Axios
-                axios.get(`/admin/perfiles/${id}`)
-                    .then(response => {
-                        console.log(response.data); // Agrega esta línea para verificar los datos recibidos
-
-                        // Rellenar el formulario con los datos obtenidos
-                        const datos = response.data[0]; // Obtener el primer elemento del array de resultados
-                        document.getElementById('cargoInput2').value = datos.cargo;
-                        document.getElementById('estadoSelect').value = datos.estado;
-
-                        // Al hacer clic en "Guardar cambios"
-                        document.getElementById('btnGuardarCambios').addEventListener('click', (event) => {
-                            event.preventDefault(); // Evitar que el formulario se envíe automáticamente
-
-                            // Obtener el nuevo valor del campo "cargo" y "estado"
-                            const nuevoCargo = document.getElementById('cargoInput2').value;
-                            const nuevoEstado = document.getElementById('estadoSelect').value;
-
-                            // Realizar la solicitud PUT mediante Axios
-                            axios.put(`/admin/perfiles/${id}`, { cargo: nuevoCargo, estado: nuevoEstado })
-                                .then(response => {
-                                    console.log(response.data); // Agrega esta línea para verificar la respuesta del servidor
-
-                                    // Actualizar el campo "cargo" en el formulario
-                                    document.getElementById('cargoInput2').value = nuevoCargo;
-
-                                    // Cerrar el modal
-                                    const modal = document.getElementById('modalActualizar');
-                                    const bootstrapModal = bootstrap.Modal.getInstance(modal);
-                                    bootstrapModal.hide();
-
-                                    // Actualizar los datos en la tabla sin recargar la página
-                                    const cargoElement = document.getElementById(`sinrecargar-cargo-${id}`);
-                                    const estadoElement = document.getElementById(`sinrecargar-estado-${id}`);
-                                    cargoElement.textContent = nuevoCargo;
-                                    estadoElement.textContent = nuevoEstado;
-
-                                    // Mostrar notificación Swal de actualización exitosa
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: '¡Actualización exitosa!',
-                                        text: 'Datos Actualizados',
-                                    });
-                                })
-                                .catch(error => {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Dato Repetido',
-                                        text: 'Nose pudo Actualizar',
-                                    });
-                                });
-                        });
-                    })
-                    .catch(error => {
-                        console.error(error);
+          boton.addEventListener('click', () => {
+            const id2 = boton.getAttribute('data-id');
+      
+            // Realizar la solicitud GET para obtener los datos del usuario
+            axios.get(`/admin/usuarios/${id2}`)
+              .then(response => {
+                console.log(response.data); // Verificar los datos recibidos
+      
+                // Rellenar el formulario con los datos obtenidos
+                const datos = response.data[0]; // Obtener el primer elemento del array de resultados
+                document.getElementById('dniInput2').value = datos.dni_usuario;
+                document.getElementById('nombreInput2').value = datos.nombre;
+                document.getElementById('usuarioInput2').value = datos.usuario;
+                document.getElementById('idusuario').value = datos.idusuario;
+                document.getElementById('estado').value = datos.estado_usuario;
+                // Realizar la solicitud GET para obtener la lista de perfiles
+                axios.get('/admin/perfilesjson2')
+                  .then(response => {
+                    console.log(response.data); // Verificar los datos recibidos
+      
+                    const perfiles = response.data; // Obtener la lista de perfiles
+      
+                    const selectCargo = document.getElementById('cargoInput2');
+                    selectCargo.innerHTML = ''; // Limpiar las opciones existentes
+      
+                    // Agregar las opciones de los perfiles al select
+                    perfiles.forEach(perfil => {
+                      const option = document.createElement('option');
+                      option.value = perfil.idperfil;
+                      option.text = perfil.cargo;
+      
+                      // Establecer el atributo "selected" si el idperfil coincide con el del usuario
+                      if (perfil.idperfil === datos.idperfil) {
+                        option.selected = true;
+                      }
+      
+                      selectCargo.appendChild(option);
                     });
+                  })
+                  .catch(error => {
+                    console.error(error);
+                  });
+              })
+              .catch(error => {
+                console.error(error);
+              });
+          });
+        });
+      </script>
+      
+
+      <script>
+            // Obtener el botón "Guardar"
+        const botonGuardar = document.getElementById('btnGuardarCambios2');
+      
+        // Al hacer clic en el botón "Guardar"
+        botonGuardar.addEventListener('click', () => {
+          // Obtener los datos del formulario
+          const idusuario = document.getElementById('idusuario').value;
+          const dni = document.getElementById('dniInput2').value;
+          const nombre = document.getElementById('nombreInput2').value;
+          const usuario = document.getElementById('usuarioInput2').value;
+          const cargoInput2 = document.getElementById('cargoInput2').value;
+          const estado = document.getElementById('estado').value;
+      
+          // Crear un objeto con los datos del usuario
+          const datosUsuario = {
+            dni_usuario: dni,
+            nombre: nombre,
+            usuario: usuario,
+            idperfil: cargoInput2,
+            estado_usuario: estado
+          };
+      
+          // Realizar la solicitud PUT para actualizar los datos del usuario
+          axios.put(`/admin/usuarios/${idusuario}`, datosUsuario)
+            .then(response => {
+              console.log(response.data);
+              location.reload();
+            })
+            .catch(error => {
+              console.error(error);
+              // Realizar las acciones necesarias en caso de error
             });
         });
-    </script>
+      </script>
+    
+    
 
-<script>
-    // Evento de click en el botón "Guardar Datos"
-    document.getElementById('guardarDatos').addEventListener('click', () => {
-      const dni = document.getElementById('dniInput').value;
-      const nombre = document.getElementById('nombreInput').value;
-      const usuario = document.getElementById('usuarioInput').value;
-      const password = document.getElementById('passwordInput').value;
-      const imagen = document.getElementById('imagenInput').files[0];
-      const cargo = document.getElementById('cargoInput').value;
-  
-      // Crear un objeto FormData
-      const formData = new FormData();
-      formData.append('dni_usuario', dni);
-      formData.append('nombre', nombre);
-      formData.append('usuario', usuario);
-      formData.append('password', password);
-      formData.append('imagen', imagen);
-      formData.append('cargo', cargo);
-  
-      axios.post('/admin/usuarios', formData)
-        .then(response => {
-          console.log(response.data);
-          // Aquí puedes realizar las acciones necesarias después de guardar los datos
-          swal.fire({
-            title: "Datos guardados",
-            text: "Los datos se han guardado exitosamente",
-            icon: "success",
-          });
-  
-          // Limpiar el formulario
-          document.getElementById('myForm').reset();
-  
-          location.reload();
-        })
-        .catch(error => {
-          console.error(error);
-          swal.fire({
-            title: "Error",
-            text: "Los datos no se han guardado exitosamente, Vea que sea una imagen, o que no repite el DNI por favor",
-            icon: "error",
-          });
+
+    
+
+
+
+
+
+
+    <script>
+        // Evento de click en el botón "Registrar"
+        document.getElementById('registrarBtn').addEventListener('click', () => {
+            const btnRegistrar = document.getElementById('registrarBtn');
+            btnRegistrar.setAttribute('disabled', true); // Deshabilita el botón
+
+            // Agrega la animación de carga al botón
+            btnRegistrar.innerHTML = `
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Loading...
+      `;
+
+            const dni = document.getElementById('dniInput').value;
+            const nombre = document.getElementById('nombreInput').value;
+            const usuario = document.getElementById('usuarioInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const imagen = document.getElementById('imagenInput').files[0];
+            const cargo = document.getElementById('cargoInput').value;
+
+            // Crea un objeto FormData
+            const formData = new FormData();
+            formData.append('dni_usuario', dni);
+            formData.append('nombre', nombre);
+            formData.append('usuario', usuario);
+            formData.append('password', password);
+            formData.append('imagen', imagen);
+            formData.append('cargo', cargo);
+
+            axios.post('/admin/usuarios', formData)
+                .then(response => {
+                    console.log(response.data);
+                    // Realiza las acciones necesarias después de guardar los datos
+                    Swal.fire({
+                        title: "Datos guardados",
+                        text: "Los datos se han guardado exitosamente",
+                        icon: "success",
+                    });
+
+                    // Limpia el formulario
+                    document.getElementById('myForm').reset();
+
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error(error);
+                    Swal.fire({
+                        title: "Error",
+                        text: "Los datos no se han guardado exitosamente. Verifica que sea una imagen válida o que no se repita el DNI, por favor",
+                        icon: "error",
+                    });
+                })
+                .finally(() => {
+                    // Habilita nuevamente el botón
+                    btnRegistrar.removeAttribute('disabled');
+                    btnRegistrar.innerHTML = 'Registrar';
+                });
         });
-    });
-  </script>
-  
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
