@@ -1,252 +1,334 @@
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin Usuario</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-  </head>
-  <body>
+</head>
+
+<body>
 
     <style>
         .navbar-nav.custom-margin {
-          margin-right: 85px; /* Puedes ajustar el valor del margen según tus preferencias */
+            margin-right: 85px;
+            /* Puedes ajustar el valor del margen según tus preferencias */
         }
-      </style>
-      
-      <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-          <a  class="navbar-brand" href="#">San Mathias</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Seguridad
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="/admin/usuarios">Usuarios</a></li>
-                  <li><a class="dropdown-item" href="/admin/perfiles">Perfiles</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="/admin/cambiarcontra">Cambiar Contraseña</a></li>
-                </ul>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Productos
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Action</a></li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Dropdown
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Action</a></li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-              </li>
-            </ul>
-            <ul class="navbar-nav ms-auto custom-margin mb-2 mb-lg-0"> <!-- Alinea a la izquierda y agrega margen personalizado -->
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Perfil
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Datos</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="/salir">Salir</a></li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+    </style>
 
-      <div class="container">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">San Mathias</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Seguridad
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/admin/usuarios">Usuarios</a></li>
+                            <li><a class="dropdown-item" href="/admin/perfiles">Perfiles</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="/admin/cambiarcontra">Cambiar Contraseña</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Productos
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Dropdown
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto custom-margin mb-2 mb-lg-0">
+                    <!-- Alinea a la izquierda y agrega margen personalizado -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Perfil
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Datos</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="/salir">Salir</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
         <div class="row">
-          <div class="col">
-            <div>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">Registrar Usuario</button>
-            </div>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                      <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">usuario</th>
-                        <th scope="col">Estado</th>
-                        <th scope="col">Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <% usuarios.forEach(function(usuario) { %>
-                        <tr>
-                          <td><%= usuario.idusuario %></td>
-                          <td id="sinrecargar-nombre-<%= usuario.idusuario%>"><%= usuario.nombre %></td>
-                          <td id="sinrecargar-usuario-<%= usuario.idusuario %>"><%= usuario.usuario %></td>
-                          <td>
-                            <button class="btn btn-success boton-actualizar" data-id="<%= usuario.idusuario %>"
-                                data-bs-toggle="modal" data-bs-target="#modalActualizar" title="Editar"><i class="bi bi-app-indicator"></i></button>
-                        </td>
-                        </tr>
-                      <% }); %>
-                    </tbody>
-                  </table>
-                  
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Registrar Perfil</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <form id="myForm">
-                <div class="form-group">
-                  <label for="cargoInput">Cargo:</label>
-                  <input type="text" class="form-control" id="cargoInput" placeholder="Ingrese su cargo">
+            <div class="col">
+                <div>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#myModal">Registrar Usuario</button>
                 </div>
-                
-              </form>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">DNI</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Usuario</th>
+                                <th scope="col">Cargo</th>
+                                <th scope="col">Foto</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% usuarios.forEach(function(usuario) { %>
+                                <tr>
+                                    <td>
+                                        <%= usuario.idusuario %>
+                                    </td>
+                                    <td>
+                                        <%= usuario.dni_usuario %>
+                                    </td>
+                                    <td id="sinrecargar-nombre-<%= usuario.idusuario%>">
+                                        <%= usuario.nombre %>
+                                    </td>
+                                    <td id="sinrecargar-usuario-<%= usuario.idusuario %>">
+                                        <%= usuario.usuario %>
+                                    </td>
+                                    <td>
+                                        <%= usuario.cargo %>
+                                    </td>
+                                    <td style="display: flex; justify-content: center; align-items: center;margin-top: -8px;">
+                                        <img src="<%= usuario.imagenURL %>" alt="" style="width: 70px; height: 70px;">
+                                      </td>
+                                    <td>
+                                        <%= usuario.estado_usuario %>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-success boton-actualizar"
+                                            data-id="<%= usuario.idusuario %>" data-bs-toggle="modal"
+                                            data-bs-target="#modalActualizar" title="Editar"><i
+                                                class="bi bi-app-indicator"></i></button>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary" id="guardarDatos">Registrar</button>
-        </div>
-      </div>
     </div>
-  </div>
-        
-  <div class="modal2">
-    <!-- Modal Actualizar -->
-    <div class="modal fade" id="modalActualizar" tabindex="-1" aria-labelledby="modalActualizarLabel"
-        aria-hidden="true">
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalActualizarLabel">Actualizar Datos</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <h5 class="modal-title" id="exampleModalLabel">Registrar Perfil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formularioActualizar">
+                    <form id="myForm" enctype="multipart/form-data">
                         <div class="mb-3">
-                            <label for="cargoInput">Cargo:</label>
-                            <input type="text" class="form-control" id="cargoInput2" placeholder="Ingrese su cargo">
+                            <label for="dniInput">DNI:</label>
+                            <input type="number" class="form-control" id="dniInput">
                         </div>
                         <div class="mb-3">
-                            <label for="estadoSelect">Estado:</label>
-                            <select class="form-select" name="estado" id="estadoSelect">
-                                <option value="Activo">Activo</option>
-                                <option value="Inactivo">Inactivo</option>
-                            </select>
+                            <label for="nombreInput">Nombre:</label>
+                            <input type="text" class="form-control" id="nombreInput">
                         </div>
-                        <input type="hidden" id="idperfil" name="idperfil">
-                        <button type="submit" id="btnGuardarCambios" class="btn btn-primary">Guardar cambios</button>
+                        <div class="mb-3">
+                            <label for="usuarioInput">Usuario:</label>
+                            <input type="text" class="form-control" id="usuarioInput">
+                        </div>
+                        <div class="mb-3">
+                            <label for="passwordInput">Contraseña:</label>
+                            <input type="password" class="form-control" id="passwordInput">
+                        </div>
+                        <div class="mb-3">
+                            <label for="imagenInput">Imagen:</label>
+                            <input type="file" class="form-control" name="imagen" id="imagenInput">
+                        </div>
+                        <div class="mb-3">
+                            <label for="nombreunidad">Perfil:</label>
+                           <select class="form-select" id="cargoInput" name="cargo" required>
+                              <% perfiles.forEach(function(perfil) { %>
+                              <option value="<%= perfil.idperfil %>"><%= perfil.cargo %></option>
+                             <% }); %>
+                             </select>
+                        </div>
                     </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="guardarDatos">Registrar</button>
                 </div>
             </div>
         </div>
     </div>
 
-</div>
+    <div class="modal2">
+        <!-- Modal Actualizar -->
+        <div class="modal fade" id="modalActualizar" tabindex="-1" aria-labelledby="modalActualizarLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalActualizarLabel">Actualizar Datos</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formularioActualizar">
+                            <div class="mb-3">
+                                <label for="cargoInput">Cargo:</label>
+                                <input type="text" class="form-control" id="cargoInput2" placeholder="Ingrese su cargo">
+                            </div>
+                            <div class="mb-3">
+                                <label for="estadoSelect">Estado:</label>
+                                <select class="form-select" name="estado" id="estadoSelect">
+                                    <option value="Activo">Activo</option>
+                                    <option value="Inactivo">Inactivo</option>
+                                </select>
+                            </div>
+                            <input type="hidden" id="idperfil" name="idperfil">
+                            <button type="submit" id="btnGuardarCambios" class="btn btn-primary">Guardar
+                                cambios</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
 
 
-<script>
-  // Obtener el botón "Actualizar"
-  const botonesActualizar = document.querySelectorAll('.boton-actualizar');
+    <script>
+        // Obtener el botón "Actualizar"
+        const botonesActualizar = document.querySelectorAll('.boton-actualizar');
 
-  // Al hacer clic en cualquier botón "Actualizar"
-  botonesActualizar.forEach(boton => {
-    boton.addEventListener('click', () => {
-      const id = boton.getAttribute('data-id');
+        // Al hacer clic en cualquier botón "Actualizar"
+        botonesActualizar.forEach(boton => {
+            boton.addEventListener('click', () => {
+                const id = boton.getAttribute('data-id');
 
-      // Realizar la solicitud GET mediante Axios
-      axios.get(`/admin/perfiles/${id}`)
-        .then(response => {
-          console.log(response.data); // Agrega esta línea para verificar los datos recibidos
+                // Realizar la solicitud GET mediante Axios
+                axios.get(`/admin/perfiles/${id}`)
+                    .then(response => {
+                        console.log(response.data); // Agrega esta línea para verificar los datos recibidos
 
-          // Rellenar el formulario con los datos obtenidos
-          const datos = response.data[0]; // Obtener el primer elemento del array de resultados
-          document.getElementById('cargoInput2').value = datos.cargo;
-          document.getElementById('estadoSelect').value = datos.estado;
+                        // Rellenar el formulario con los datos obtenidos
+                        const datos = response.data[0]; // Obtener el primer elemento del array de resultados
+                        document.getElementById('cargoInput2').value = datos.cargo;
+                        document.getElementById('estadoSelect').value = datos.estado;
 
-          // Al hacer clic en "Guardar cambios"
-          document.getElementById('btnGuardarCambios').addEventListener('click', (event) => {
-            event.preventDefault(); // Evitar que el formulario se envíe automáticamente
+                        // Al hacer clic en "Guardar cambios"
+                        document.getElementById('btnGuardarCambios').addEventListener('click', (event) => {
+                            event.preventDefault(); // Evitar que el formulario se envíe automáticamente
 
-            // Obtener el nuevo valor del campo "cargo" y "estado"
-            const nuevoCargo = document.getElementById('cargoInput2').value;
-            const nuevoEstado = document.getElementById('estadoSelect').value;
+                            // Obtener el nuevo valor del campo "cargo" y "estado"
+                            const nuevoCargo = document.getElementById('cargoInput2').value;
+                            const nuevoEstado = document.getElementById('estadoSelect').value;
 
-            // Realizar la solicitud PUT mediante Axios
-            axios.put(`/admin/perfiles/${id}`, { cargo: nuevoCargo, estado: nuevoEstado })
-              .then(response => {
-                console.log(response.data); // Agrega esta línea para verificar la respuesta del servidor
+                            // Realizar la solicitud PUT mediante Axios
+                            axios.put(`/admin/perfiles/${id}`, { cargo: nuevoCargo, estado: nuevoEstado })
+                                .then(response => {
+                                    console.log(response.data); // Agrega esta línea para verificar la respuesta del servidor
 
-                // Actualizar el campo "cargo" en el formulario
-                document.getElementById('cargoInput2').value = nuevoCargo;
+                                    // Actualizar el campo "cargo" en el formulario
+                                    document.getElementById('cargoInput2').value = nuevoCargo;
 
-                // Cerrar el modal
-                const modal = document.getElementById('modalActualizar');
-                const bootstrapModal = bootstrap.Modal.getInstance(modal);
-                bootstrapModal.hide();
+                                    // Cerrar el modal
+                                    const modal = document.getElementById('modalActualizar');
+                                    const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                                    bootstrapModal.hide();
 
-                // Actualizar los datos en la tabla sin recargar la página
-                const cargoElement = document.getElementById(`sinrecargar-cargo-${id}`);
-                const estadoElement = document.getElementById(`sinrecargar-estado-${id}`);
-                cargoElement.textContent = nuevoCargo;
-                estadoElement.textContent = nuevoEstado;
+                                    // Actualizar los datos en la tabla sin recargar la página
+                                    const cargoElement = document.getElementById(`sinrecargar-cargo-${id}`);
+                                    const estadoElement = document.getElementById(`sinrecargar-estado-${id}`);
+                                    cargoElement.textContent = nuevoCargo;
+                                    estadoElement.textContent = nuevoEstado;
 
-                // Mostrar notificación Swal de actualización exitosa
-                Swal.fire({
-                  icon: 'success',
-                  title: '¡Actualización exitosa!',
-                  text: 'Datos Actualizados',
-                });
-              })
-              .catch(error => {
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Dato Repetido',
-                  text: 'Nose pudo Actualizar',
-                });
-              });
-          });
-        })
-        .catch(error => {
-          console.error(error);
+                                    // Mostrar notificación Swal de actualización exitosa
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Actualización exitosa!',
+                                        text: 'Datos Actualizados',
+                                    });
+                                })
+                                .catch(error => {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Dato Repetido',
+                                        text: 'Nose pudo Actualizar',
+                                    });
+                                });
+                        });
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            });
         });
-    });
-  });
-</script>
+    </script>
 
 <script>
-     // Evento de click en el botón "Guardar Datos"
-     document.getElementById('guardarDatos').addEventListener('click', () => {
+    // Evento de click en el botón "Guardar Datos"
+    document.getElementById('guardarDatos').addEventListener('click', () => {
+      const dni = document.getElementById('dniInput').value;
+      const nombre = document.getElementById('nombreInput').value;
+      const usuario = document.getElementById('usuarioInput').value;
+      const password = document.getElementById('passwordInput').value;
+      const imagen = document.getElementById('imagenInput').files[0];
       const cargo = document.getElementById('cargoInput').value;
   
-      axios.post('/admin/perfiles', { cargo})
+      // Crear un objeto FormData
+      const formData = new FormData();
+      formData.append('dni_usuario', dni);
+      formData.append('nombre', nombre);
+      formData.append('usuario', usuario);
+      formData.append('password', password);
+      formData.append('imagen', imagen);
+      formData.append('cargo', cargo);
+  
+      axios.post('/admin/usuarios', formData)
         .then(response => {
           console.log(response.data);
           // Aquí puedes realizar las acciones necesarias después de guardar los datos
@@ -258,8 +340,8 @@
   
           // Limpiar el formulario
           document.getElementById('myForm').reset();
-          
-          location.reload()  
+  
+          location.reload();
         })
         .catch(error => {
           console.error(error);
@@ -270,8 +352,12 @@
           });
         });
     });
-</script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-  </body>
+  </script>
+  
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+</body>
+
 </html>

@@ -3,7 +3,7 @@ const session = require("express-session");
 const pool = require("../../database/db");
 const bcryptjs = require("bcryptjs");
 const { vistaPerfil, postPerfil, vistaPerfilID, putVista, perfilJson } = require("../controllers/admin/registrarperfiles");
-const { vistaUsuarios } = require("../controllers/admin/registrarusuarios");
+const { vistaUsuarios, postUsuarios } = require("../controllers/admin/registrarusuarios");
 
 const router = express.Router();
 
@@ -142,7 +142,7 @@ router.put('/admin/perfiles/:id', function (req, res) {
 });
 
 router.get("/admin/usuarios", protectRoute, vistaUsuarios);
-
+router.post("/admin/usuarios", postUsuarios);
 
 
 router.post("/admin/perfiles", postPerfil);
